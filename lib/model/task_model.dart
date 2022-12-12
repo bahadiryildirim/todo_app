@@ -3,9 +3,9 @@ import 'package:uuid/uuid.dart';
 
 class TaskModel {
   final String id;
-  final String taskDetail;
+  String taskDetail;
   final DateTime createdAt;
-  final bool isComplated;
+  bool isComplated;
 
   TaskModel(
       {required this.id,

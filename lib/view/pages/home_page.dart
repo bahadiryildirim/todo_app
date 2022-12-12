@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import '../model/task_model.dart';
+import 'package:todo_app/view/widgets/task_widget.dart';
+import '../../model/task_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,8 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     _allTasks = <TaskModel>[];
+    _allTasks.add(TaskModel.create(
+        taskDetail: "Deneme Görev bu", createdAt: DateTime.now()));
   }
 
   @override
@@ -46,18 +49,7 @@ class _HomePageState extends State<HomePage> {
       body: _allTasks.isNotEmpty
           ? ListView.builder(
               itemBuilder: (context, index) {
-                return Dismissible(
-                  key: Key(_allTasks[index].id),
-                  child: ListTile(
-                    title: Text(_allTasks[index].taskDetail),
-                    subtitle: Text(_allTasks[index].createdAt.toString()),
-                  ),
-                  onDismissed: (direction) {
-                    setState(() {
-                      _allTasks.removeAt(index);
-                    });
-                  },
-                );
+                return dismissableTaskView(index);
               },
               itemCount: _allTasks.length,
             )
@@ -65,6 +57,45 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                   "Gösterilecek herhangi bir görev bulunmamaktadır.\nBir görev ekleyerek başlayabilirsin !"),
             ),
+    );
+  }
+
+  Dismissible dismissableTaskView(int index) {
+    return Dismissible(
+      background: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Container(
+          color: Colors.red,
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 20.0),
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 11,
+              ),
+              const Text(
+                "Bu görev silinmek üzere...",
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        ),
+      ),
+      key: Key(_allTasks[index].id),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction) {
+        if (direction == DismissDirection.startToEnd) {
+          setState(() {
+            _allTasks.removeAt(index);
+          });
+        }
+      },
+      child: TaskWidget(task: _allTasks[index]),
     );
   }
 
@@ -95,9 +126,8 @@ class _HomePageState extends State<HomePage> {
                       });
                     },
                   );
-                }
-
-                print("3den kucuk" + value);
+                  print("3den kucuk" + value);
+                } else {}
               },
               style: const TextStyle(fontSize: 22),
               decoration: const InputDecoration(
